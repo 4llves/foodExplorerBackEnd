@@ -1,40 +1,11 @@
-require("express-async-errors");
-// require("dotenv/config");
+const express = require('express');//importo
 
-// const uploadConfig = require('./configs/upload');
+const routes = require("./routes");
 
-const migrationsRun = require("./database/sqlite/migrations");
-// const AppError = require('./utils/AppError');
-
-const express = require('express');
-const cors = require("cors");
-// const routes = require('./routes');
-
-migrationsRun();
-
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-app.use("/files", express.static(uploadConfig.UPLOADS_FOLDER));
+const app = express();//inicio o express
+app.use(express.json());//padrão que receberá as info pelo corpo da req
 
 app.use(routes);
 
-app.use((error, req, res, next) => {
-  if (error instanceof AppError) {
-    return res.status(error.statusCode).json({
-      status: 'error',
-      message: error.message
-    });
-  }
-
-  console.error(error);
-
-  return res.status(500).json({
-    status: 'error',
-    message: 'Internal server error',
-  });
-});
-
-const PORT = process.env.PORT || 3334;
-app.listen(PORT, () => console.log(`Server ir running on Port ${PORT} 🚀`));
+const PORT = 3333;//crio o numero da porta
+app.listen(PORT, () => console.log(`Server ir running on Port ${PORT} 🚀`));//aqui vai ficar escutando a porta que informei
