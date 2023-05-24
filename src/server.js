@@ -1,5 +1,5 @@
 require('express-async-errors')
-const migrationsRun = require('./database/sqlite/migrations')
+// const migrationsRun = require('./database/sqlite/migrations')
 
 const express = require('express') // importo
 
@@ -7,7 +7,7 @@ const AppError = require('./utils/AppError')
 
 const routes = require('./routes')
 
-migrationsRun()
+// migrationsRun()
 
 const app = express() // inicio o express
 app.use(express.json()) // padrão que receberá as info pelo corpo da req
