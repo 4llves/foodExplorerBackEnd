@@ -5,7 +5,7 @@ exports.up = (knex) =>
     table.text('email')
     table.text('password')
     table.text('avatar').nullable()
-    table.boolean('admin').notNullable().defaultTo(0)
+    table.boolean('isAdmin').notNullable().defaultTo(0)
 
     table.timestamp('createdAt').default(knex.fn.now())
     table.timestamp('updatedAt').default(knex.fn.now())
