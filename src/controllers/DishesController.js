@@ -13,8 +13,6 @@ class NotesController {
       userId,
     })
 
-    await knex('dishes').insert(dishId)
-
     const ingredientsInsert = ingredients.map((ingredient) => {
       return {
         dishId,
@@ -25,6 +23,14 @@ class NotesController {
     await knex('ingredients').insert(ingredientsInsert)
 
     res.json()
+  }
+
+  async show(req, res) {
+    const { id } = req.params
+
+    const dishe = await knex('dishes').where({ id }).first()
+
+    return res.json(dishe)
   }
 }
 

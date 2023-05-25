@@ -4,7 +4,7 @@ exports.up = (knex) =>
     table.text('image').nullable()
     table.text('name')
     table.text('category')
-    table.text('price')
+    table.integer('price')
     table.text('description')
     table.integer('userId').references('id').inTable('users')
 
