@@ -48,12 +48,31 @@ class NotesController {
   }
 
   async index(req, res) {
-    const { name, userId } = req.query
+    const { name, userId, ingredients } = req.query
 
-    const dishes = await knex('dishes')
-      .where({ userId })
-      .whereLike('name', `%${name}%`)
-      .orderBy('name')
+    let dishes
+
+    if (ingredients) {
+      const filterIngredients = ingredients
+        .split(',')
+        .map((ingredient) => ingredient.trim())
+
+      // console.log(filterIngredients)
+
+      dishes = await knex('ingredients')
+        .select(['dishes.id', 'dishes.name', 'dishes.userId'])
+        .where('dishes.userId', userId)
+        .whereLike('dishes.name', `%${name}%`)
+        .whereIn('name', filterIngredients)
+        .innerJoin('dishes', 'dishes.id', 'ingredients.dishId')
+
+      console.log(dishes)
+    } else {
+      dishes = await knex('dishes')
+        .where({ userId })
+        .whereLike('dishes.name', `%${name}%`)
+        .orderBy('name')
+    }
 
     return res.json(dishes)
   }
