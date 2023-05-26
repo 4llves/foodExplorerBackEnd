@@ -46,6 +46,17 @@ class NotesController {
 
     return res.json()
   }
+
+  async index(req, res) {
+    const { name, userId } = req.query
+
+    const dishes = await knex('dishes')
+      .where({ userId })
+      .whereLike('name', `%${name}%`)
+      .orderBy('name')
+
+    return res.json(dishes)
+  }
 }
 
 module.exports = NotesController
