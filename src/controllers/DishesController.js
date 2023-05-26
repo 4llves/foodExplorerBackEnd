@@ -29,8 +29,22 @@ class NotesController {
     const { id } = req.params
 
     const dishe = await knex('dishes').where({ id }).first()
+    const ingredient = await knex('ingredients')
+      .where({ dishId: id })
+      .orderBy('name')
 
-    return res.json(dishe)
+    return res.json({
+      ...dishe,
+      ingredient,
+    })
+  }
+
+  async delete(req, res) {
+    const { id } = req.params
+
+    await knex('dishes').where({ id }).delete()
+
+    return res.json()
   }
 }
 
