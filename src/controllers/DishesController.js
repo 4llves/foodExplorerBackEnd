@@ -16,6 +16,7 @@ class NotesController {
     const ingredientsInsert = ingredients.map((ingredient) => {
       return {
         dishId,
+        userId,
         name: ingredient,
       }
     })
@@ -48,31 +49,37 @@ class NotesController {
   }
 
   async index(req, res) {
-    const { name, userId, ingredients } = req.query
+    const { name, userId } = req.query // add ingredients
 
-    let dishes
+    // let dishes
 
-    if (ingredients) {
-      const filterIngredients = ingredients
-        .split(',')
-        .map((ingredient) => ingredient.trim())
+    // if (ingredients) {
+    //   const filterIngredients = ingredients
+    //     .split(',')
+    //     .map((ingredient) => ingredient.trim())
 
-      // console.log(filterIngredients)
+    //   console.log(filterIngredients)
 
-      dishes = await knex('ingredients')
-        .select(['dishes.id', 'dishes.name', 'dishes.userId'])
-        .where('dishes.userId', userId)
-        .whereLike('dishes.name', `%${name}%`)
-        .whereIn('name', filterIngredients)
-        .innerJoin('dishes', 'dishes.id', 'ingredients.dishId')
+    //   dishes = await knex('ingredients')
+    //     .select(['dishes.id', 'dishes.name', 'dishes.userId'])
+    //     .where('dishes.userId', userId)
+    //     .whereLike('ingredients.name', `%${ingredients}%`)
+    //     .whereIn('name', filterIngredients)
+    //     .innerJoin('dishes', 'dishes.id', 'ingredients.dishId')
+    //     .orderBy('dishes.name')
 
-      console.log(dishes)
-    } else {
-      dishes = await knex('dishes')
-        .where({ userId })
-        .whereLike('dishes.name', `%${name}%`)
-        .orderBy('name')
-    }
+    //   console.log(dishes)
+    // } else {
+    //   dishes = await knex('dishes')
+    //     .where({ userId })
+    //     .whereLike('dishes.name', `%${name}%`)
+    //     .orderBy('name')
+    // }
+
+    const dishes = await knex('dishes')
+      .where({ userId })
+      .whereLike('dishes.name', `%${name}%`)
+      .orderBy('name')
 
     return res.json(dishes)
   }
