@@ -49,7 +49,7 @@ class NotesController {
   }
 
   async index(req, res) {
-    const { name, userId } = req.query // add ingredients
+    const { name } = req.query // add ingredients
 
     // let dishes
 
@@ -77,7 +77,6 @@ class NotesController {
     // }
 
     const dishes = await knex('dishes')
-      .where({ userId })
       .whereLike('dishes.name', `%${name}%`)
       .orderBy('name')
 
