@@ -49,38 +49,47 @@ class NotesController {
   }
 
   async index(req, res) {
-    const { name } = req.query // add ingredients
+    const { name, ingredients, userId } = req.query // add ingredients
 
-    // let dishes
+    let dishes
 
-    // if (ingredients) {
-    //   const filterIngredients = ingredients
-    //     .split(',')
-    //     .map((ingredient) => ingredient.trim())
+    if (ingredients) {
+      const filterIngredients = ingredients
+        .split(',')
+        .map((ingredient) => ingredient.trim())
 
-    //   console.log(filterIngredients)
+      // console.log(filterIngredients)
 
-    //   dishes = await knex('ingredients')
-    //     .select(['dishes.id', 'dishes.name', 'dishes.userId'])
-    //     .where('dishes.userId', userId)
-    //     .whereLike('ingredients.name', `%${ingredients}%`)
-    //     .whereIn('name', filterIngredients)
-    //     .innerJoin('dishes', 'dishes.id', 'ingredients.dishId')
-    //     .orderBy('dishes.name')
+      dishes = await knex('ingredients')
+        .select('dishes.id', 'dishes.name', 'dishes.userId')
+        .where('dishes.userId', userId)
+        .whereLike('ingredients.name', `%${ingredients}%`)
+        .whereIn('ingredients.name', filterIngredients)
+        .innerJoin('dishes', 'dishes.id', 'ingredients.dishId')
+        .orderBy('dishes.name')
 
-    //   console.log(dishes)
-    // } else {
-    //   dishes = await knex('dishes')
-    //     .where({ userId })
-    //     .whereLike('dishes.name', `%${name}%`)
-    //     .orderBy('name')
-    // }
+      // console.log(dishes)
+    } else {
+      dishes = await knex('dishes')
+        .where({ userId })
+        .whereLike('dishes.name', `%${name}%`)
+        .orderBy('name')
+    }
 
-    const dishes = await knex('dishes')
-      .whereLike('dishes.name', `%${name}%`)
-      .orderBy('name')
+    const userIngredients = await knex('ingredients').where({ userId })
 
-    return res.json(dishes)
+    const ingredientsWithDishes = dishes.map((dishe) => {
+      const dishesIngredients = userIngredients.filter(
+        (ingredient) => ingredient.dishId === dishe.id,
+      )
+
+      return {
+        ...dishe,
+        ingredients: dishesIngredients,
+      }
+    })
+
+    return res.json(ingredientsWithDishes)
   }
 }
 

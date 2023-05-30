@@ -23,6 +23,7 @@ app.use((error, req, res, next) => {
 
   // verifica se a instacia do error vem de um AppError
   // e retorna se vem um erro do lado do servidor
+  console.log(error)
   return res.status(500).json({
     status: 'error',
     message: 'Internal server error',
