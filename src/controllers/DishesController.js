@@ -23,7 +23,7 @@ class NotesController {
 
     await knex('ingredients').insert(ingredientsInsert)
 
-    res.json()
+    return res.json()
   }
 
   async show(req, res) {
