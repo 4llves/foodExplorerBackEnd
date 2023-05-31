@@ -1,13 +1,16 @@
 require('express-async-errors')
-
-const express = require('express') // importo
-
 const AppError = require('./utils/AppError')
+const uploadConfig = require('./configs/upload')
 
+const cors = require('cors')
+const express = require('express') // importo
 const routes = require('./routes')
 
 const app = express() // inicio o express
+app.use(cors())
 app.use(express.json()) // padrão que receberá as info pelo corpo da req
+
+app.use('/files', express.static(uploadConfig.UPLOADS_FOLDER))
 
 app.use(routes)
 
