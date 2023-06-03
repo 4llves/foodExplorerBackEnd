@@ -10,7 +10,7 @@ const app = express() // inicio o express
 app.use(cors())
 app.use(express.json()) // padrão que receberá as info pelo corpo da req
 
-app.use('/files', express.static(uploadConfig.UPLOADS_FOLDER))
+app.use('/files/dishImage', express.static(uploadConfig.UPLOADS_FOLDER))
 
 app.use(routes)
 

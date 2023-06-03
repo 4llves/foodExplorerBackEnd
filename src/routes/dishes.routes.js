@@ -18,10 +18,11 @@ dishesRoutes.post('/', dishesController.create)
 dishesRoutes.get('/:id', dishesController.show)
 dishesRoutes.delete('/:id', dishesController.delete)
 dishesRoutes.get('/', dishesController.index)
+
 dishesRoutes.patch(
   '/dishesimg/:id',
   ensureAuthenticated,
-  upload.single('dishesimg'),
+  upload.single('image'),
   dishesImageController.update,
 )
 
