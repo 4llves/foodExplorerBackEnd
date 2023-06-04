@@ -1,6 +1,7 @@
 const { verify } = require('jsonwebtoken')
 const AppError = require('../utils/AppError')
 const authConfig = require('../configs/auth')
+const knex = require('../database/knex')
 
 // os middleware recebem um next par chamar a proxima function
 function ensureAuthenticated(req, res, next) {
@@ -25,4 +26,19 @@ function ensureAuthenticated(req, res, next) {
   }
 }
 
-module.exports = ensureAuthenticated
+async function isAdmin(req, res, next) {
+  const userId = req.user.id
+
+  const user = await knex('users').where({ id: userId }).first()
+
+  if (!user.isAdmin) {
+    throw new AppError('Usuário não é um admin', 401)
+  }
+
+  next()
+}
+
+module.exports = {
+  ensureAuthenticated,
+  isAdmin,
+}

@@ -1,43 +1,46 @@
 const knex = require('../database/knex')
+const AppError = require('../utils/AppError')
+// const DiskStorage = require('../providers/DiskStorage')
 
-class NotesController {
+class DishesController {
   async create(req, res) {
     const { name, category, price, description, ingredients } = req.body
-    const userId = req.user.id
 
-    const [dishId] = await knex('dishes').insert({
+    const filename = req.file
+
+    console.log({
       name,
       category,
       price,
       description,
-      userId,
+      ingredients,
     })
 
-    const ingredientsInsert = ingredients.map((ingredient) => {
-      return {
-        dishId,
-        userId,
-        name: ingredient,
-      }
-    })
+    console.log(filename)
 
-    await knex('ingredients').insert(ingredientsInsert)
+    // const checkExistenceOfDish = await knex('dishes').where({ name }).first()
 
-    return res.json()
-  }
+    // if (checkExistenceOfDish) {
+    //   throw new AppError('Esse prato ja existe!')
+    // }
 
-  async show(req, res) {
-    const { id } = req.params
+    // const [dishId] = await knex('dishes').insert({
+    //   name,
+    //   category,
+    //   price,
+    //   description,
+    // })
 
-    const dishe = await knex('dishes').where({ id }).first()
-    const ingredient = await knex('ingredients')
-      .where({ dishId: id })
-      .orderBy('name')
+    // const ingredientsInsert = ingredients.map((ingredient) => {
+    //   return {
+    //     dishId,
+    //     name: ingredient,
+    //   }
+    // })
 
-    return res.json({
-      ...dishe,
-      ingredient,
-    })
+    // await knex('ingredients').insert(ingredientsInsert)
+
+    // return res.json()
   }
 
   async delete(req, res) {
@@ -50,7 +53,6 @@ class NotesController {
 
   async index(req, res) {
     const { name, ingredients } = req.query // add ingredients
-    const userId = req.user.id
 
     let dishes
 
@@ -62,8 +64,14 @@ class NotesController {
       // console.log(filterIngredients)
 
       dishes = await knex('ingredients')
-        .select('dishes.id', 'dishes.name', 'dishes.userId')
-        .where('dishes.userId', userId)
+        .select([
+          'dishes.id',
+          'dishes.name',
+          'dishes.price',
+          'dishes.category',
+          'dishes.image',
+          'dishes.price',
+        ])
         .whereLike('ingredients.name', `%${ingredients}%`)
         .whereIn('ingredients.name', filterIngredients)
         .innerJoin('dishes', 'dishes.id', 'ingredients.dishId')
@@ -72,12 +80,11 @@ class NotesController {
       // console.log(dishes)
     } else {
       dishes = await knex('dishes')
-        .where({ userId })
         .whereLike('dishes.name', `%${name}%`)
         .orderBy('name')
     }
 
-    const userIngredients = await knex('ingredients').where({ userId })
+    const userIngredients = await knex('ingredients')
 
     const ingredientsWithDishes = dishes.map((dishe) => {
       const dishesIngredients = userIngredients.filter(
@@ -92,6 +99,21 @@ class NotesController {
 
     return res.json(ingredientsWithDishes)
   }
+
+  async show(req, res) {
+    const { id } = req.params
+
+    const dishe = await knex('dishes').where({ id }).first()
+
+    const ingredient = await knex('ingredients')
+      .where({ dishId: id })
+      .orderBy('name')
+
+    return res.json({
+      ...dishe,
+      ingredient,
+    })
+  }
 }
 
-module.exports = NotesController
+module.exports = DishesController

@@ -6,11 +6,11 @@ exports.up = (knex) =>
     table.text('category')
     table.integer('price')
     table.text('description')
-    table
-      .integer('userId')
-      .references('id')
-      .inTable('users')
-      .onDelete('CASCADE')
+    // table
+    //   .integer('userId')
+    //   .references('id')
+    //   .inTable('users')
+    //   .onDelete('CASCADE')
 
     table.timestamp('createdAt').default(knex.fn.now())
     table.timestamp('updatedAt').default(knex.fn.now())

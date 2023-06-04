@@ -15,6 +15,7 @@ app.use('/files/dishImage', express.static(uploadConfig.UPLOADS_FOLDER))
 app.use(routes)
 
 app.use((error, req, res, next) => {
+  console.log(error)
   // verifica se a instacia do error vem de um AppError
   // e retorna se vem um erro do lado do cliente
   if (error instanceof AppError) {

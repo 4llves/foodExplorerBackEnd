@@ -4,7 +4,11 @@ const uploadConfig = require('../configs/upload')
 
 const DishesController = require('../controllers/DishesController')
 const DishesImageController = require('../controllers/DishesImageController')
-const ensureAuthenticated = require('../middlewares/ensureAuthenticated')
+
+const {
+  ensureAuthenticated,
+  isAdmin,
+} = require('../middlewares/ensureAuthenticated')
 
 const dishesRoutes = Router()
 const upload = multer(uploadConfig.MULTER)
@@ -14,14 +18,17 @@ const dishesImageController = new DishesImageController() // instanciando na mem
 
 dishesRoutes.use(ensureAuthenticated) // aplicando autenticação em todas as rotas
 
-dishesRoutes.post('/', dishesController.create)
+// user
 dishesRoutes.get('/:id', dishesController.show)
-dishesRoutes.delete('/:id', dishesController.delete)
 dishesRoutes.get('/', dishesController.index)
+
+// admin
+dishesRoutes.post('/', isAdmin, dishesController.create)
+dishesRoutes.delete('/:id', isAdmin, dishesController.delete)
 
 dishesRoutes.patch(
   '/dishesimg/:id',
-  ensureAuthenticated,
+  isAdmin,
   upload.single('image'),
   dishesImageController.update,
 )
