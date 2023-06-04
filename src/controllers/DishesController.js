@@ -1,12 +1,16 @@
 const knex = require('../database/knex')
 const AppError = require('../utils/AppError')
-// const DiskStorage = require('../providers/DiskStorage')
+const DiskStorage = require('../providers/DiskStorage')
 
 class DishesController {
   async create(req, res) {
     const { name, category, price, description, ingredients } = req.body
 
-    const filename = req.file
+    const { filename: imageFilename } = req.file
+
+    const diskStorage = new DiskStorage()
+
+    const filename = await diskStorage.saveFile(imageFilename)
 
     console.log({
       name,
@@ -18,29 +22,30 @@ class DishesController {
 
     console.log(filename)
 
-    // const checkExistenceOfDish = await knex('dishes').where({ name }).first()
+    const checkExistenceOfDish = await knex('dishes').where({ name }).first()
 
-    // if (checkExistenceOfDish) {
-    //   throw new AppError('Esse prato ja existe!')
-    // }
+    if (checkExistenceOfDish) {
+      throw new AppError('Esse prato ja existe!')
+    }
 
-    // const [dishId] = await knex('dishes').insert({
-    //   name,
-    //   category,
-    //   price,
-    //   description,
-    // })
+    const [dishId] = await knex('dishes').insert({
+      image: filename,
+      name,
+      category,
+      price,
+      description,
+    })
 
-    // const ingredientsInsert = ingredients.map((ingredient) => {
-    //   return {
-    //     dishId,
-    //     name: ingredient,
-    //   }
-    // })
+    const ingredientsInsert = ingredients.map((ingredient) => {
+      return {
+        dishId,
+        name: ingredient,
+      }
+    })
 
-    // await knex('ingredients').insert(ingredientsInsert)
+    await knex('ingredients').insert(ingredientsInsert)
 
-    // return res.json()
+    return res.json()
   }
 
   async delete(req, res) {
