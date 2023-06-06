@@ -23,7 +23,7 @@ dishesRoutes.get('/', dishesController.index)
 
 // admin
 dishesRoutes.post('/', isAdmin, upload.single('image'), dishesController.create)
-dishesRoutes.post(
+dishesRoutes.put(
   '/:id',
   isAdmin,
   upload.single('image'),

@@ -62,32 +62,31 @@ class DishesController {
     dish.category = category ?? dish.category
     dish.price = price ?? dish.price
     dish.description = description ?? dish.description
-    dish.ingredients = ingredients ?? dish.ingredients
     dish.image = image ?? dish.image
 
     await knex('dishes').where({ id }).update(dish)
     await knex('dishes').where({ id }).update('updatedAt', knex.fn.now())
 
     const hasOnlyOneIngredient = typeof ingredients === 'string'
+    console.log(hasOnlyOneIngredient)
 
     let ingredientsUpdated
+
     if (hasOnlyOneIngredient) {
       ingredientsUpdated = {
-        dish_id: dish.id,
+        dishId: dish.id,
         name: ingredients,
       }
     } else if (ingredients.length > 1) {
       ingredientsUpdated = ingredients.map((ingredient) => {
         return {
-          dish_id: dish.id,
+          dishId: dish.id,
           name: ingredient,
         }
       })
 
-      await knex('ingredients').where({ dish_id: id }).delete()
-      await knex('ingredients')
-        .where({ dish_id: id })
-        .insert(ingredientsUpdated)
+      await knex('ingredients').where({ dishId: id }).delete()
+      await knex('ingredients').where({ dishId: id }).insert(ingredientsUpdated)
     }
 
     return res.json()
