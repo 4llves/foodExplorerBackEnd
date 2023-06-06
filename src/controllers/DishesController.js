@@ -22,11 +22,11 @@ class DishesController {
 
     console.log(filename)
 
-    const checkExistenceOfDish = await knex('dishes').where({ name }).first()
+    // const checkExistenceOfDish = await knex('dishes').where({ name }).first()
 
-    if (checkExistenceOfDish) {
-      throw new AppError('Esse prato ja existe!')
-    }
+    // if (checkExistenceOfDish) {
+    //   throw new AppError('Esse prato ja existe!')
+    // }
 
     const [dishId] = await knex('dishes').insert({
       image: filename,
@@ -55,9 +55,10 @@ class DishesController {
     const dish = await knex('dishes').where({ id }).first()
 
     if (!dish) {
-      throw new AppError('O Prato não existe!')
+      throw new AppError('O prato não existe')
     }
 
+    dish.image = image ?? dish.image
     dish.name = name ?? dish.name
     dish.category = category ?? dish.category
     dish.price = price ?? dish.price
@@ -68,7 +69,6 @@ class DishesController {
     await knex('dishes').where({ id }).update('updatedAt', knex.fn.now())
 
     const hasOnlyOneIngredient = typeof ingredients === 'string'
-    console.log(hasOnlyOneIngredient)
 
     let ingredientsUpdated
 
