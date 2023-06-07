@@ -77,13 +77,15 @@ class DishesController {
         dishId: dish.id,
         name: ingredients,
       }
-    } else if (ingredients.length > 1) {
+    } else if (ingredients.length >= 1) {
       ingredientsUpdated = ingredients.map((ingredient) => {
         return {
           dishId: dish.id,
           name: ingredient,
         }
       })
+
+      console.log(ingredientsUpdated)
 
       await knex('ingredients').where({ dishId: id }).delete()
       await knex('ingredients').where({ dishId: id }).insert(ingredientsUpdated)
@@ -154,13 +156,13 @@ class DishesController {
 
     const dishe = await knex('dishes').where({ id }).first()
 
-    const ingredient = await knex('ingredients')
+    const ingredients = await knex('ingredients')
       .where({ dishId: id })
       .orderBy('name')
 
     return res.json({
       ...dishe,
-      ingredient,
+      ingredients,
     })
   }
 }

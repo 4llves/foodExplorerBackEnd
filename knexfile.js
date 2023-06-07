@@ -2,6 +2,7 @@ const path = require('path')
 
 module.exports = {
   development: {
+    // debug: true,
     client: 'sqlite3',
     connection: {
       // buscar onde esta o banco de dados
