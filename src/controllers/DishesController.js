@@ -52,13 +52,19 @@ class DishesController {
     const { name, category, price, description, ingredients, image } = req.body
     const { id } = req.params
 
+    const { filename: imageFilename } = req.file
+
+    const diskStorage = new DiskStorage()
+
+    const filename = await diskStorage.saveFile(imageFilename)
+
     const dish = await knex('dishes').where({ id }).first()
 
     if (!dish) {
       throw new AppError('O prato não existe')
     }
 
-    dish.image = image ?? dish.image
+    dish.image = filename
     dish.name = name ?? dish.name
     dish.category = category ?? dish.category
     dish.price = price ?? dish.price
@@ -137,13 +143,13 @@ class DishesController {
 
     const userIngredients = await knex('ingredients')
 
-    const ingredientsWithDishes = dishes.map((dishe) => {
+    const ingredientsWithDishes = dishes.map((dish) => {
       const dishesIngredients = userIngredients.filter(
-        (ingredient) => ingredient.dishId === dishe.id,
+        (ingredient) => ingredient.dishId === dish.id,
       )
 
       return {
-        ...dishe,
+        ...dish,
         ingredients: dishesIngredients,
       }
     })
@@ -154,14 +160,14 @@ class DishesController {
   async show(req, res) {
     const { id } = req.params
 
-    const dishe = await knex('dishes').where({ id }).first()
+    const dish = await knex('dishes').where({ id }).first()
 
     const ingredients = await knex('ingredients')
       .where({ dishId: id })
       .orderBy('name')
 
     return res.json({
-      ...dishe,
+      ...dish,
       ingredients,
     })
   }
