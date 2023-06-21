@@ -129,28 +129,29 @@ class DishesController {
           'dishes.image',
           'dishes.price',
         ])
-        .whereLike('ingredients.name', `%${ingredients}%`)
+        // .whereLike('ingredients.name', `%${ingredients}%`)
+        .whereLike('dishes.name', `%${name}%`)
         .whereIn('ingredients.name', filterIngredients)
         .innerJoin('dishes', 'dishes.id', 'ingredients.dishId')
         .orderBy('dishes.name')
 
-      // console.log(dishes)
+      console.log(dishes)
     } else {
       dishes = await knex('dishes')
         .whereLike('dishes.name', `%${name}%`)
         .orderBy('name')
     }
 
-    const userIngredients = await knex('ingredients')
+    const dishesIngredients = await knex('ingredients')
 
     const ingredientsWithDishes = dishes.map((dish) => {
-      const dishesIngredients = userIngredients.filter(
+      const disheIngredient = dishesIngredients.filter(
         (ingredient) => ingredient.dishId === dish.id,
       )
 
       return {
         ...dish,
-        ingredients: dishesIngredients,
+        ingredients: disheIngredient,
       }
     })
 
