@@ -108,8 +108,58 @@ class DishesController {
     return res.json()
   }
 
+  // async index(req, res) {
+  //   const { name, ingredients } = req.query // add ingredients
+
+  //   let dishes
+
+  //   if (ingredients) {
+  //     const filterIngredients = ingredients
+  //       .split(',')
+  //       .map((ingredient) => ingredient.trim())
+
+  //     // console.log(filterIngredients)
+
+  //     dishes = await knex('ingredients')
+  //       .select([
+  //         'dishes.id',
+  //         'dishes.name',
+  //         'dishes.price',
+  //         'dishes.category',
+  //         'dishes.image',
+  //         'dishes.price',
+  //       ])
+  //       .whereLike('ingredients.name', `%${name}%`)
+  //       .whereIn('ingredients.name', filterIngredients)
+  //       .innerJoin('dishes', 'dishes.id', 'ingredients.dishId')
+  //       .orderBy('dishes.name')
+
+  //     console.log(dishes)
+  //   } else {
+  //     dishes = await knex('dishes')
+  //       .whereLike('dishes.name', `%${name}%`)
+  //       .orderBy('name')
+  //   }
+
+  //   const dishesIngredients = await knex('ingredients')
+
+  //   const ingredientsWithDishes = dishes.map((dish) => {
+  //     const disheIngredient = dishesIngredients.filter(
+  //       (ingredient) => ingredient.dishId === dish.id,
+  //     )
+
+  //     return {
+  //       ...dish,
+  //       ingredients: disheIngredient,
+  //     }
+  //   })
+
+  //   return res.json(ingredientsWithDishes)
+  // }
+
   async index(req, res) {
-    const { name, ingredients } = req.query // add ingredients
+    const { name: title, ingredients } = req.query // add ingredients
+    // console.log(ingredients)
 
     let dishes
 
@@ -129,16 +179,16 @@ class DishesController {
           'dishes.image',
           'dishes.price',
         ])
-        // .whereLike('ingredients.name', `%${ingredients}%`)
-        .whereLike('dishes.name', `%${name}%`)
+        .whereLike('dishes.name', `%${title}%`)
         .whereIn('ingredients.name', filterIngredients)
         .innerJoin('dishes', 'dishes.id', 'ingredients.dishId')
+        .groupBy('dishes.id')
         .orderBy('dishes.name')
 
       console.log(dishes)
     } else {
       dishes = await knex('dishes')
-        .whereLike('dishes.name', `%${name}%`)
+        .whereLike('dishes.name', `%${title}%`)
         .orderBy('name')
     }
 
