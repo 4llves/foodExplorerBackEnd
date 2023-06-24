@@ -1,5 +1,5 @@
 const knex = require('../database/knex')
-const AppError = require('../utils/AppError')
+// const AppError = require('../utils/AppError')
 const DiskStorage = require('../providers/DiskStorage')
 
 class DishesController {
@@ -60,8 +60,8 @@ class DishesController {
 
     const dish = await knex('dishes').where({ id }).first()
 
-    if (!dish) {
-      throw new AppError('O prato não existe')
+    if (dish && dish.image) {
+      await diskStorage.deleteFile(dish.image)
     }
 
     dish.image = filename
