@@ -23,12 +23,14 @@ dishesRoutes.get('/', dishesController.index)
 
 // admin
 dishesRoutes.post('/', isAdmin, upload.single('image'), dishesController.create)
+
 dishesRoutes.put(
   '/:id',
   isAdmin,
   upload.single('image'),
   dishesController.update,
 )
+
 dishesRoutes.delete('/:id', isAdmin, dishesController.delete)
 
 // dishesRoutes.patch(

@@ -52,19 +52,22 @@ class DishesController {
     const { name, category, price, description, ingredients, image } = req.body
     const { id } = req.params
 
-    const { filename: imageFilename } = req.file
-
-    const diskStorage = new DiskStorage()
-
-    const filename = await diskStorage.saveFile(imageFilename)
-
     const dish = await knex('dishes').where({ id }).first()
 
-    if (dish && dish.image) {
-      await diskStorage.deleteFile(dish.image)
+    let filename = ''
+
+    if (req.file && req.file.filename) {
+      const imageFilename = req.file.filename
+      const diskStorage = new DiskStorage()
+
+      if (dish && dish.image) {
+        await diskStorage.deleteFile(dish.image)
+      }
+
+      filename = await diskStorage.saveFile(imageFilename)
     }
 
-    dish.image = filename
+    dish.image = filename ?? dish.image
     dish.name = name ?? dish.name
     dish.category = category ?? dish.category
     dish.price = price ?? dish.price
