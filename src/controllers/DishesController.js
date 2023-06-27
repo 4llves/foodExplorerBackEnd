@@ -1,5 +1,4 @@
 const knex = require('../database/knex')
-// const AppError = require('../utils/AppError')
 const DiskStorage = require('../providers/DiskStorage')
 
 class DishesController {
@@ -19,14 +18,6 @@ class DishesController {
       description,
       ingredients,
     })
-
-    console.log(filename)
-
-    // const checkExistenceOfDish = await knex('dishes').where({ name }).first()
-
-    // if (checkExistenceOfDish) {
-    //   throw new AppError('Esse prato ja existe!')
-    // }
 
     const [dishId] = await knex('dishes').insert({
       image: filename,
@@ -93,8 +84,6 @@ class DishesController {
           name: ingredient,
         }
       })
-
-      console.log(ingredientsUpdated)
 
       await knex('ingredients').where({ dishId: id }).delete()
       await knex('ingredients').where({ dishId: id }).insert(ingredientsUpdated)
