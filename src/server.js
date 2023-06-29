@@ -1,4 +1,6 @@
 require('express-async-errors')
+require('dotenv/config')
+
 const AppError = require('./utils/AppError')
 const uploadConfig = require('./configs/upload')
 
@@ -34,5 +36,5 @@ app.use((error, req, res, next) => {
   })
 })
 
-const PORT = 3333 // crio o numero da porta
+const PORT = process.env.PORT || 3334
 app.listen(PORT, () => console.log(`Server ir running on Port ${PORT} 🚀`)) // aqui vai ficar escutando a porta que informei

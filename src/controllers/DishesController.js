@@ -150,54 +150,21 @@ class DishesController {
   // }
 
   async index(req, res) {
-    const { name: title, ingredients } = req.query // add ingredients
-    // console.log(ingredients)
+    let { search } = req.query // add ingredients
 
-    let dishes
-
-    if (ingredients) {
-      const filterIngredients = ingredients
-        .split(',')
-        .map((ingredient) => ingredient.trim())
-
-      // console.log(filterIngredients)
-
-      dishes = await knex('ingredients')
-        .select([
-          'dishes.id',
-          'dishes.name',
-          'dishes.price',
-          'dishes.category',
-          'dishes.image',
-          'dishes.price',
-        ])
-        .whereLike('dishes.name', `%${title}%`)
-        .whereIn('ingredients.name', filterIngredients)
-        .innerJoin('dishes', 'dishes.id', 'ingredients.dishId')
-        .groupBy('dishes.id')
-        .orderBy('dishes.name')
-
-      console.log(dishes)
-    } else {
-      dishes = await knex('dishes')
-        .whereLike('dishes.name', `%${title}%`)
-        .orderBy('name')
+    if (search === undefined) {
+      search = ''
     }
 
-    const dishesIngredients = await knex('ingredients')
+    const dishes = await knex
+      .select('dishes.*')
+      .from('dishes')
+      .innerJoin('ingredients', 'dishes.id', '=', 'ingredients.dishId')
+      .whereLike('dishes.name', `%${search}%`)
+      .orWhereLike('ingredients.name', `%${search}%`)
+      .groupBy('dishes.name')
 
-    const ingredientsWithDishes = dishes.map((dish) => {
-      const disheIngredient = dishesIngredients.filter(
-        (ingredient) => ingredient.dishId === dish.id,
-      )
-
-      return {
-        ...dish,
-        ingredients: disheIngredient,
-      }
-    })
-
-    return res.json(ingredientsWithDishes)
+    return res.json(dishes)
   }
 
   async show(req, res) {
